@@ -68,4 +68,56 @@ describe('TODOMvc App', () => {
       .children()
       .should('have.length', 2);
   });
+
+  it('Edita uma tarefa existente', () => {
+    cy.visit('');
+  
+    cy.get('[data-cy=todo-input]')
+      .type('TP2 de Engenharia de Software{enter}');
+  
+    cy.get('[data-cy=todos-list] > li')
+      .first()
+      .dblclick();
+  
+    cy.get('[data-cy=todos-list] > li .edit')
+      .clear()
+      .type('TP2 de Sistemas Operacionais{enter}');
+  
+    cy.get('[data-cy=todos-list] > li')
+      .first()
+      .should('have.text', 'TP2 de Sistemas Operacionais');
+  });
+  
+  it('Adiciona múltiplas tarefas', () => {
+    cy.visit('');
+  
+    cy.get('[data-cy=todo-input]')
+      .type('Tarefa 1{enter}')
+      .type('Tarefa 2{enter}')
+      .type('Tarefa 3{enter}');
+  
+    cy.get('[data-cy=todos-list]')
+      .children()
+      .should('have.length', 3)
+      .each((item, index) => {
+        cy.wrap(item).should('have.text', `Tarefa ${index + 1}`);
+      });
+  });
+  
+  it('Atualiza a contagem correta de tarefas restantes', () => {
+    cy.visit('');
+  
+    cy.get('[data-cy=todo-input]')
+      .type('Tarefa 1{enter}')
+      .type('Tarefa 2{enter}')
+      .type('Tarefa 3{enter}');
+  
+    cy.get('.todo-count').should('contain.text', '3 items left');
+  
+    cy.get('[data-cy=todos-list] > li [data-cy=toggle-todo-checkbox]')
+      .first()
+      .click();
+  
+    cy.get('.todo-count').should('contain.text', '2 items left');
+  });
 });
